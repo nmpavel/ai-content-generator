@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import { connectDB } from "./core/db";
+import contentRoutes from "./routes/content.routes";
 
 dotenv.config();
 connectDB();
@@ -29,6 +30,7 @@ Response Body: ${JSON.stringify(body)}
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/content", contentRoutes);
 
 const PORT = process.env.PORT || 5000;
 

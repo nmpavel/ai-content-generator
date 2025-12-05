@@ -5,7 +5,7 @@ export interface AuthRequest extends Request {
   user?: any;
 }
 
-export const protect = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authGuard = (req: AuthRequest, res: Response, next: NextFunction) => {
   let token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
