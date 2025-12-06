@@ -22,7 +22,6 @@ Key features:
 
 - Next.js (React + TypeScript)
 - Tailwind CSS
-- Socket.IO Client
 - Zustand (state management)
 - js-cookie (for authentication tokens)
 
@@ -32,7 +31,6 @@ Key features:
 - TypeScript
 - MongoDB + Mongoose
 - Redis + BullMQ (queue)
-- Socket.IO (real-time communication)
 - JWT Authentication
 - Google Gemini API (AI content generation)
 
@@ -117,10 +115,6 @@ BullMQ + Redis handles delayed execution (1-minute delay) for content generation
 Worker Process:
 
 A separate Node.js worker monitors the queue and executes the AI call, decoupling request handling from heavy processing.
-
-Real-Time Updates:
-
-Socket.IO pushes content generation status to the user in real-time, eliminating polling.
 
 Database:
 
