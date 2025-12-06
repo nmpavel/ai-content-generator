@@ -75,7 +75,7 @@ npm run dev
 Open your browser at http://localhost:3000.
 
 
-API Documentation
+##API Documentation
 
 
 Authentication
@@ -104,7 +104,7 @@ GET	/api/content/:id/status		Get job status by Job ID
 
 GET	/api/content/stats		Get count of content grouped by type
 
-Architectural Decisions
+##Architectural Decisions
 
 AI Model:
 
