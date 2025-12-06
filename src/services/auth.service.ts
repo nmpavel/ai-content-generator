@@ -1,4 +1,3 @@
-// src/services/auth.service.ts
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/generateToken";

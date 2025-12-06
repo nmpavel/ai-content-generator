@@ -1,67 +1,106 @@
-
-import { generateAIContent } from "../lib/aiClient";
+import mongoose from "mongoose";
+import { contentQueue } from "../core/queue";
 import Content, { IContent } from "../models/Content";
 import { ContentStatus } from "../schemas/content.schema";
 
 export class ContentService {
-  static async generateContent(userId: string, prompt: string, type: string): Promise<IContent> {
+  static async generateContent(
+    userId: string,
+    prompt: string,
+    type: string
+  ): Promise<IContent> {
     const content = await Content.create({
-      userId,
+      userId: new mongoose.Types.ObjectId(userId),
       prompt,
       type,
-      status: ContentStatus.PROCESSING,
+      status: ContentStatus.QUEUED,
     });
 
-    try {
-      // Call AI
-      const generatedText = await generateAIContent(prompt, type);
+    const job = await contentQueue.add(
+      "generate",
+      {
+        _id: content._id.toString(),
+        prompt,
+        type,
+      },
+      {
+        delay: 60000, // 1 minute
+      }
+    );
 
-      content.generatedText = generatedText;
-      content.status = ContentStatus.DONE;
+    if (job?.id) {
+      content.jobId = job.id.toString();
       await content.save();
-    } catch (err: any) {
-      content.status = ContentStatus.FAILED;
-      content.generatedText = "";
-      await content.save();
-      throw new Error("AI generation failed: " + err.message);
     }
 
     return content;
   }
 
-  // Get all content for a user
-  static async getUserContent(userId: string) {
-    return Content.find({ userId }).sort({ createdAt: -1 });
+  static async getTypeStats(userId: string) {
+    const stats = await Content.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 },
+        }
+      }
+    ]);
+
+    return stats.map(s => ({
+      type: s._id,
+      count: s.count,
+    }));
   }
 
-  // Get content by ID
+  static async listJobs(userId: string, status?: ContentStatus) {
+    const filter: any = {
+      userId: new mongoose.Types.ObjectId(userId),
+    };
+    if (status) filter.status = status;
+
+    return Content.find(filter).sort({ createdAt: -1 });
+  }
+
+  static async getJobStatus(jobId: string, userId: string) {
+    return Content.findOne({
+      jobId,
+      userId: new mongoose.Types.ObjectId(userId)
+    });
+  }
+
   static async getContentById(contentId: string, userId: string) {
-    const content = await Content.findOne({ _id: contentId, userId });
-    if (!content) throw new Error("Content not found");
+    return Content.findOne({
+      _id: new mongoose.Types.ObjectId(contentId),
+      userId: new mongoose.Types.ObjectId(userId)
+    });
+  }
+
+  static async updateContent(
+    contentId: string,
+    userId: string,
+    updateData: Partial<{ title: string; prompt: string; type: string }>
+  ) {
+    const content = await Content.findOne({
+      _id: new mongoose.Types.ObjectId(contentId),
+      userId: new mongoose.Types.ObjectId(userId)
+    });
+
+    if (!content) throw new Error("Content not found!");
+
+    Object.assign(content, updateData);
+    await content.save();
     return content;
   }
 
-//   Update content
-  static async updateContent(
-  contentId: string,
-  userId: string,
-  updateData: Partial<{ title: string; prompt: string; type: string }>
-): Promise<IContent> {
-  const content = await Content.findOne({ _id: contentId, userId });
-  if (!content) throw new Error("Content not found !");
-
-  if (updateData.title !== undefined) content.title = updateData.title;
-  if (updateData.prompt !== undefined) content.prompt = updateData.prompt;
-  if (updateData.type !== undefined) content.type = updateData.type;
-
-  await content.save();
-  return content;
-}
-
-// Delete content
-  static async deleteContent(contentId: string, userId: string): Promise<void> {
-  const deleted = await Content.findOneAndDelete({ _id: contentId, userId });
-  if (!deleted) throw new Error("Content not found");
-}
-
+  static async deleteContent(contentId: string, userId: string) {
+    await Content.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(contentId),
+      userId: new mongoose.Types.ObjectId(userId)
+    });
+  }
 }
