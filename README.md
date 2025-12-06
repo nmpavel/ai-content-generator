@@ -73,19 +73,35 @@ npm install
 npm run dev
 ```
 Open your browser at http://localhost:3000.
+
+
 API Documentation
+
+
 Authentication
+
 Method	Endpoint	Body	Description
+
 POST	/api/auth/register	{ name, email, password }	Register new user
+
 POST	/api/auth/login	{ email, password }	Login user and get JWT
+
 Content Management
+
 Method	Endpoint	Body / Params	Description
+
 POST	/api/content/generate	{ prompt, type }	Queue a new AI content generation job
+
 GET	/api/content	?status= (optional)	Get all user content or filter by status
+
 GET	/api/content/:id		Get content by ID
+
 PUT	/api/content/:id	{ title, prompt, type }	Update content by ID
+
 DELETE	/api/content/:id		Delete content by ID
+
 GET	/api/content/:id/status		Get job status by Job ID
+
 GET	/api/content/stats		Get count of content grouped by type
 
 Architectural Decisions
