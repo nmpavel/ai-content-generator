@@ -58,16 +58,15 @@ export const getJobStatus = async (req: AuthRequest, res: Response) => {
 
 // GET /api/content/jobs?status=
 export const listJobs = async (req: AuthRequest, res: Response) => {
-  const { status } = req.query;
+  const { status, search } = req.query;
 
   let statusFilter: ContentStatus | undefined = undefined;
   if (status && Object.values(ContentStatus).includes(status as ContentStatus)) {
     statusFilter = status as ContentStatus;
   }
-console.log(req.user);
 
   try {
-    const jobs = await ContentService.listJobs(req.user.id, statusFilter);
+    const jobs = await ContentService.listJobs(req.user.id, statusFilter, search as string);
     res.json(jobs);
   } catch (err: any) {
     res.status(500).json({ message: err.message });

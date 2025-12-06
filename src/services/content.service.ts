@@ -57,13 +57,20 @@ export class ContentService {
     }));
   }
 
-  static async listJobs(userId: string, status?: ContentStatus) {
-    const filter: any = {
-      userId: new mongoose.Types.ObjectId(userId),
-    };
-    if (status) filter.status = status;
+ static async listJobs(userId: string, status?: ContentStatus, search?: string) {
+  const filter: any = { userId: new mongoose.Types.ObjectId(userId) };
 
-    return Content.find(filter).sort({ createdAt: -1 });
+  if (status) filter.status = status;
+
+  if (search) {
+    filter.$or = [
+      { prompt: { $regex: search, $options: "i" } },
+      { type: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const jobs = await Content.find(filter).sort({ createdAt: -1 });
+  return jobs;
   }
 
   static async getJobStatus(jobId: string, userId: string) {
