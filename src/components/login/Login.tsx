@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/userStore";
 
 export default function Login() {
   const setUserName = useAuthStore((s) => s.setUserName);
+  const setUserId = useAuthStore((s) => s.setUserId);
   const [isSignup, setIsSignup] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,6 +38,7 @@ export default function Login() {
       if (!isSignup) {
         Cookies.set("token", response?.token, { expires: 7 });
         setUserName(response?.user?.name);
+        setUserId(response?.user?.id);
         router.replace("/dashboard");
       } else {
         alert("Registration successful! Now login Please.");
