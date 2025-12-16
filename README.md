@@ -41,8 +41,8 @@ Key features:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/ai-content-generator.git
-cd ai-content-generator/backend
+git clone https://github.com/nmpavel/ai-content-generator.git
+git checkout backend
 ```
 ### 2. Install backend dependencies
 ```bash
@@ -66,7 +66,8 @@ npx ts-node src/lib/content.worker.ts
 ```
 ### 5. Frontend setup
 ```bash
-cd ../frontend
+git clone https://github.com/nmpavel/ai-content-generator.git
+git checkout frontend
 npm install
 npm run dev
 ```
