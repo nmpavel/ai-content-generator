@@ -3,7 +3,7 @@
 
 ## Project Overview
 
-This project is a **full-stack web application** that allows users to generate, manage, and track AI-powered content in real-time. Users can submit prompts to generate different types of content such as blog posts, captions, or product descriptions. The content generation is powered by **Google Gemini AI**. Jobs are queued with **BullMQ + Redis** for delayed execution, and users receive **real-time status updates via WebSockets (Socket.IO)**.
+This project is a **full-stack web application** that allows users to generate, manage, and track AI-powered content in real-time. Users can submit prompts to generate different types of content such as blog posts, captions, or product descriptions. The content generation is powered by **Google Gemini AI**. Jobs are queued with **BullMQ + Redis** for delayed execution, and users receive **real-time status updates by polling**.
 
 Key features:
 
